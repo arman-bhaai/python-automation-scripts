@@ -79,22 +79,24 @@ import logging
 # main functional class
 class ConsoleApp:
     def __init__(
-                self, 
-                course_name, 
-                module_no,
-                module_topic_str,
-                module_vid_url, 
-                evt_creation_stamp, 
-                evt_reminder_min_before,
-                raw_attach_file_path,
-                taibah_academy_dir,
-                repeat_freq,
-                event_recur_until_date,
-                api_creds_file,
-                json_file_path):
+        self, 
+        course_name, 
+        module_no,
+        module_topic_str,
+        module_vid_url, 
+        evt_creation_stamp, 
+        evt_reminder_min_before,
+        raw_attach_file_path,
+        taibah_academy_dir,
+        repeat_freq,
+        event_recur_until_date,
+        api_creds_file,
+        json_file_path
+    ):
         # create a custom logger instance
         self.init_logger()
 
+        ############################## Define Initial (User Input) Variables ##############################
         # define event info
         # course name
         self.course_name = course_name # ex: 'Study Skills'
@@ -107,7 +109,7 @@ class ConsoleApp:
         # the date when the event is being created
         self.evt_creation_stamp = evt_creation_stamp # ex: '2020-08-29'
         # a notification should appear before specified minutes of the event date
-        self.evt_reminder_min_before = evt_reminder_min_before # ex: 120
+        self.evt_reminder_min_before = int(evt_reminder_min_before) # ex: 120
         # path to raw attachment local directory
         self.raw_attach_file_path = raw_attach_file_path # ex: '/home/antidote/Desktop/taibahacadmy_raw'
         # path to taibah academy directory, where final and processed pdfs and events info will reside
@@ -121,7 +123,12 @@ class ConsoleApp:
         # json file path for saving meta info  
         self.json_file_path = json_file_path # ex: /home/antidote/Taibah Academy/event_meta.json
 
-        self.logger.info('defined primary variables')
+        ################################ Define Final (Result) Output Variables ################################
+        # summary of the total process
+        self.proc_summary_console = ''
+        self.proc_summary_gui_dlg = ''
+
+        self.logger.info('defined initial variables')
 
         # initialize main function
         self.main()
@@ -311,6 +318,7 @@ class ConsoleApp:
             'repetition-start': self.event_exec.get('start')['date'],
             'repetition-end': self.event_recur_until_date,
             'module-video-url': self.module_vid_url,
+            'attach-file-id': self.attach_file_meta.get('id'),
             'attach-file-url': self.event_exec.get('attachments')[0]['fileUrl'],
             'event-link': self.event_exec.get('htmlLink'),
             'recurrence': self.event_exec.get('recurrence'),
@@ -359,7 +367,7 @@ class ConsoleApp:
     # show process summary
     def show_proc_summary(self):
         self.logger.info('generating process summary...')
-        proc_summary = f"""
+        self.proc_summary_console = f"""
 ####################### Process Summary #######################
 ---------------------------------------------------------------
 
@@ -377,7 +385,19 @@ Module Video URL : {self.module_vid_url}
                 Process Has Been Completed!!!
 ###############################################################
 """
-        print(proc_summary)
+        
+        self.proc_summary_gui_dlg = f"""
+Event Name : {self.event_exec.get('summary')}
+Event ID : {self.event_exec.get('id')}
+Event Topic : {self.module_topic_str}
+
+Created : {self.evt_creation_stamp}
+Repetition Start : {self.event_exec.get('start')['date']}
+Module Video URL : {self.module_vid_url}
+Event Link : {self.event_exec.get('htmlLink')}
+Recurrence : {self.event_exec.get('recurrence')}
+"""
+        print(self.proc_summary_console)
 
     # define switches
     # python switch concept was taken from --> https://jaxenter.com/implement-switch-case-statement-python-138315.html
