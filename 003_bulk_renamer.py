@@ -22,8 +22,8 @@
 #  \/                         bit.ly/arman-bhaai-on-youtube                                                                \/
 #  /\                                                                                                                      /\
 # //\\         Creation Date: 2021-06-05                                                                                  //\\
-# \\//               Version: v0.0.2                                                                                      \\//
-#  \/        Versioning Date: 2021-06-09                                                                                   \/
+# \\//               Version: v0.0.3                                                                                      \\//
+#  \/        Versioning Date: 2021-07-02                                                                                   \/
 #  /\                                                                                                                      /\
 # //\\               License: Custom License                                                                              //\\
 # \\//                                                                                                                    \\//
@@ -101,13 +101,13 @@ aparser.add_argument(
 aparser.add_argument(
     '-p', '--paper_code',
     default='bio1',
-    help='eg: bio1'
+    help='eg: bio1 / gk'
 )
 aparser.add_argument(
     '-c', '--chp_no',
-    default='ch1',
+    default='',
     help='specify the chapter name. \
-            eg: ch1'
+            eg: ch1 / <blank>'
 )
 aparser.add_argument(
     '-ext', '--file_extension',
@@ -117,7 +117,7 @@ aparser.add_argument(
 aparser.add_argument(
     '-b', '--book',
     required=True,
-    help='eg: plus/royal/tbook'
+    help='eg: plus / royal / tbook / mp3'
 )
 aparser.add_argument(
     '-iss', '--img_selection_start',
@@ -166,7 +166,10 @@ for fname in fnames:
                 continue
         else:
             img_start_found = True
-    new_path_name = f'{book}_{str(init_page_count).zfill(4)}_{paper_code}_ch{str(chp_no).zfill(2)}.{file_ext}'
+    if chp_no:
+        new_path_name = f'{book}_{str(init_page_count).zfill(4)}_{paper_code}_ch{str(chp_no).zfill(2)}.{file_ext}'
+    else:
+        new_path_name = f'{book}_{str(init_page_count).zfill(4)}_{paper_code}.{file_ext}'
     inf(f'Renaming: "{fname}" >> "{new_path_name}"')
     os.rename(fname, new_path_name)
     init_page_count += 1
