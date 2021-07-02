@@ -83,7 +83,7 @@ def err(msg):
 
 ############### CLI Configs ###############
 ap_desc = """\
-sample usage: python 003_bulk_renamer.py -b plus -ipg 5 -p bio1 -c 12
+sample usage: python 003_bulk_renamer.py -b plus -ipg 5 -p bio1 -c 12 -iss 3 -ise 10
 """
 aparser = argparse.ArgumentParser(description=ap_desc)
 aparser.add_argument(
@@ -119,6 +119,14 @@ aparser.add_argument(
     required=True,
     help='eg: plus/royal/tbook'
 )
+aparser.add_argument(
+    '-iss', '--img_selection_start',
+    help='eg: 55'
+)
+aparser.add_argument(
+    '-ise', '--img_selection_end',
+    help='eg: 60'
+)
 args = aparser.parse_args()
 
 
@@ -130,9 +138,17 @@ book = args.book
 paper_code = args. paper_code
 chp_no = args.chp_no
 file_ext = args.file_extension
+img_sel_start =  args.img_selection_start #'CCI_000208'
+img_sel_end = args.img_selection_end #'CCI_000212'
 
 
 new_name_prefix = f'pg{str(args.init_page_count).zfill(3)}'
+# img_sel_start_path = f'{img_sel_start}.{file_ext}'
+# img_sel_end_path = f'{img_sel_end}.{file_ext}'
+if img_sel_start:
+    img_sel_start_path = f'CCI_{img_sel_start.zfill(6)}.{file_ext}'
+    img_sel_end_path = f'CCI_{img_sel_end.zfill(6)}.{file_ext}'
+    img_start_found = False
 
 p = pathlib.Path()
 fnames = p.glob(glob_pattern)
@@ -143,9 +159,20 @@ if next(fnames_check, None) is None:
 
 total_rename_count = 1
 for fname in fnames:
+    # skip loop until start point has been found
+    if img_sel_start:
+        if not str(fname) == img_sel_start_path:
+            if not img_start_found:
+                continue
+        else:
+            img_start_found = True
     new_path_name = f'{book}_{str(init_page_count).zfill(4)}_{paper_code}_ch{str(chp_no).zfill(2)}.{file_ext}'
     inf(f'Renaming: "{fname}" >> "{new_path_name}"')
     os.rename(fname, new_path_name)
     init_page_count += 1
     total_rename_count +=1
+    # exit loop if loop reached to last desired image
+    if img_sel_end:
+        if str(fname) == img_sel_end_path:
+            break
 inf(f'Total Renamed Files: {total_rename_count-1}')
