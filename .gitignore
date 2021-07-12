@@ -1,6 +1,7 @@
 # arman_bhaai specific
 del.*
 armanian*
+dir_ignore/
 .vscode/
 venv*/
 # Byte-compiled / optimized / DLL files

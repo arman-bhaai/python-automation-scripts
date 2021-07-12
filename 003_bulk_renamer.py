@@ -22,8 +22,8 @@
 #  \/                         bit.ly/arman-bhaai-on-youtube                                                                \/
 #  /\                                                                                                                      /\
 # //\\         Creation Date: 2021-06-05                                                                                  //\\
-# \\//               Version: v0.0.3                                                                                      \\//
-#  \/        Versioning Date: 2021-07-02                                                                                   \/
+# \\//               Version: v0.0.4                                                                                    \\//
+#  \/        Versioning Date: 2021-07-12                                                                                   \/
 #  /\                                                                                                                      /\
 # //\\               License: Custom License                                                                              //\\
 # \\//                                                                                                                    \\//
@@ -83,7 +83,7 @@ def err(msg):
 
 ############### CLI Configs ###############
 ap_desc = """\
-sample usage: python 003_bulk_renamer.py -b plus -ipg 5 -p bio1 -c 12 -iss 3 -ise 10
+sample usage: python 003_bulk_renamer.py -b plus -ipg 5 -s bio -p 1 -c 12 -iss 3 -ise 10
 """
 aparser = argparse.ArgumentParser(description=ap_desc)
 aparser.add_argument(
@@ -99,9 +99,14 @@ aparser.add_argument(
     help='specify the name pattern of the files you want to rename'
 )
 aparser.add_argument(
+    '-s', '--subject',
+    default='bio',
+    help='eg: bio|gk'
+)
+aparser.add_argument(
     '-p', '--paper_code',
-    default='bio1',
-    help='eg: bio1 / gk'
+    default='1',
+    help='eg: 1|2'
 )
 aparser.add_argument(
     '-c', '--chp_no',
@@ -135,6 +140,7 @@ args = aparser.parse_args()
 init_page_count = args.init_page_count
 glob_pattern = args.glob_pattern
 book = args.book
+subject = args.subject
 paper_code = args. paper_code
 chp_no = args.chp_no
 file_ext = args.file_extension
@@ -167,9 +173,9 @@ for fname in fnames:
         else:
             img_start_found = True
     if chp_no:
-        new_path_name = f'{book}_{str(init_page_count).zfill(4)}_{paper_code}_ch{str(chp_no).zfill(2)}.{file_ext}'
+        new_path_name = f'{book}_{subject}_{str(init_page_count).zfill(4)}_ppr{paper_code}_ch{str(chp_no).zfill(2)}.{file_ext}'
     else:
-        new_path_name = f'{book}_{str(init_page_count).zfill(4)}_{paper_code}.{file_ext}'
+        new_path_name = f'{book}_{subject}_{str(init_page_count).zfill(4)}.{file_ext}'
     inf(f'Renaming: "{fname}" >> "{new_path_name}"')
     os.rename(fname, new_path_name)
     init_page_count += 1
